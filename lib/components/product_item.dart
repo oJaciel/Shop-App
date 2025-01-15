@@ -14,10 +14,12 @@ class ProductItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           leading: IconButton(
+            color: Theme.of(context).colorScheme.secondary,
             onPressed: () {},
             icon: Icon(Icons.favorite),
           ),
           trailing: IconButton(
+            color: Theme.of(context).colorScheme.secondary,
             onPressed: () {},
             icon: Icon(Icons.shopping_cart),
           ),

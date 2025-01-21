@@ -6,20 +6,25 @@ import 'package:shop/utils/app_routes.dart';
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(
+      context,
+      listen: false, //Provider não está mais fazendo listen das alterações
+    );
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: IconButton(
-            color: Theme.of(context).colorScheme.secondary,
-            onPressed: () {
-              product.toggleFavorite();
-            },
-            icon: Icon(
-                product.isFavorite ? Icons.favorite : Icons.favorite_border),
+          leading: Consumer<Product>( //Consumer é uma alternativa para o listener provider, podendo ser usado exatamente onde precisa modificar
+            builder: (ctx, product, _) => IconButton(
+              color: Theme.of(context).colorScheme.secondary,
+              onPressed: () {
+                product.toggleFavorite();
+              },
+              icon: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
+            ),
           ),
           trailing: IconButton(
             color: Theme.of(context).colorScheme.secondary,

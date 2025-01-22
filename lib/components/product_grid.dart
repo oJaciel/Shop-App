@@ -5,11 +5,15 @@ import 'package:shop/models/product.dart';
 import 'package:shop/models/product_list.dart';
 
 class ProductGrid extends StatelessWidget {
+  final bool showFavoriteOnly;
+
+  ProductGrid(this.showFavoriteOnly);
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ProductList>(context);
 
-    final List<Product> loadedProducts = provider.items;
+    final List<Product> loadedProducts = showFavoriteOnly == true ? provider.favoriteItems : provider.items; //Se showFavoriteOnly for verdadeiro, mostra somente os itens favoritos, senão mostra todos
 
     return GridView.builder(
       padding: const EdgeInsets.all(10),

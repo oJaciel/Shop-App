@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/models/cart.dart';
 import 'package:shop/models/product.dart';
 import 'package:shop/utils/app_routes.dart';
 
@@ -10,13 +11,18 @@ class ProductItem extends StatelessWidget {
       context,
       listen: false, //Provider não está mais fazendo listen das alterações
     );
+    final cart = Provider.of<Cart>(
+      context,
+      listen: false,
+    );
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
         footer: GridTileBar(
           backgroundColor: Colors.black87,
-          leading: Consumer<Product>( //Consumer é uma alternativa para o listener provider, podendo ser usado exatamente onde precisa modificar
+          leading: Consumer<Product>(
+            //Consumer é uma alternativa para o listener provider, podendo ser usado exatamente onde precisa modificar
             builder: (ctx, product, _) => IconButton(
               color: Theme.of(context).colorScheme.secondary,
               onPressed: () {
@@ -28,7 +34,9 @@ class ProductItem extends StatelessWidget {
           ),
           trailing: IconButton(
             color: Theme.of(context).colorScheme.secondary,
-            onPressed: () {},
+            onPressed: () {
+              cart.addItem(product);
+            },
             icon: Icon(Icons.shopping_cart),
           ),
           title: Text(

@@ -54,6 +54,31 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  //Remover um único item
+  //Usado na snackbar
+  void removeSingleItem(String productId) {
+    //Se a lista de produtos ainda não tem esse item, passa
+    if (_items.containsKey(productId) == false) {
+      return;
+    }
+    //Se já tem o item, mas a quantidade é só 1, remove totalmente o item do carrinho
+    if (_items[productId]?.quantity == 1) {
+      _items.remove(productId);
+    } else {
+      //Senão, caso a quantidade seja maior que 1, subtrai 1 da quantidade total
+      _items.update(
+        productId,
+        (existingItem) => CartItem(
+            id: existingItem.id,
+            productId: existingItem.productId,
+            name: existingItem.name,
+            quantity: existingItem.quantity - 1,
+            price: existingItem.price),
+      );
+    }
+    notifyListeners();
+  }
+
   //Limpar lista
   void clear() {
     _items = {};

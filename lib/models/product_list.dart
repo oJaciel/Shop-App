@@ -8,6 +8,10 @@ class ProductList with ChangeNotifier {
   List<Product> get items => [..._items]; // Os ... significam 'clonar' a lista
   List<Product> get favoriteItems => _items.where((product) => product.isFavorite).toList();
 
+  int get itemsCount {
+    return _items.length;
+  }
+
   void addProduct(Product product) {
     _items.add(product);
     notifyListeners();

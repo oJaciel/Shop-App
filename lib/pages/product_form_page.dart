@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/models/product.dart';
+import 'package:shop/models/product_list.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({super.key});
@@ -51,7 +53,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
     return isValidUrl == true && endsWithFile == true;
   }
 
-  //Método para submeter formulário
+  //Método para submeter formulário e salvar item
   void _submitForm() {
     final isValid = _formKey.currentState?.validate() ?? false;
 
@@ -60,15 +62,13 @@ class _ProductFormPageState extends State<ProductFormPage> {
     }
 
     _formKey.currentState?.save();
-    final newProduct = Product(
-      id: Random().nextDouble().toString(),
-      name: _formData['name'] as String,
-      description: _formData['description'] as String,
-      price: _formData['price'] as double,
-      imageUrl: _formData['imageUrl'] as String,
-    );
 
-    print(newProduct.name);
+    Provider.of<ProductList>(
+      context,
+      listen: false,
+    ).addProductFromData(_formData);
+
+    Navigator.of(context).pop();
   }
 
   @override

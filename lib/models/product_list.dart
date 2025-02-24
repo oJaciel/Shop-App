@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/models/product.dart';
+import 'package:http/http.dart' as http;
 
 class ProductList with ChangeNotifier {
   List<Product> _items = dummyProducts;
+  final _baseUrl = 'https://shop-jaciel-default-rtdb.firebaseio.com';
 
   List<Product> get items => [..._items]; // Os ... significam 'clonar' a lista
   List<Product> get favoriteItems =>
@@ -52,6 +55,19 @@ class ProductList with ChangeNotifier {
   }
 
   void addProduct(Product product) {
+    http.post(
+      Uri.parse('$_baseUrl/products.json'),
+      body: jsonEncode(
+        {
+          "name": product.name,
+          "description": product.description,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+          "isFavorite": product.isFavorite,
+        },
+      ),
+    );
+
     _items.add(product);
     notifyListeners();
   }

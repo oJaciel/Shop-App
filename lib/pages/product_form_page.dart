@@ -54,7 +54,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
   }
 
   //Método para submeter formulário e salvar item
-  void _submitForm() {
+  Future<void> _submitForm() async {
     final isValid = _formKey.currentState?.validate() ?? false;
 
     if (isValid == false) {
@@ -67,11 +67,13 @@ class _ProductFormPageState extends State<ProductFormPage> {
       _isLoading = true;
     });
 
-    Provider.of<ProductList>(
-      context,
-      listen: false,
-    ).saveProduct(_formData).catchError((error) {
-      return showDialog<void>(
+    try {
+      await Provider.of<ProductList>(
+        context,
+        listen: false,
+      ).saveProduct(_formData);
+    } catch (error) {
+      await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text('Erro!'),
@@ -84,13 +86,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
           ],
         ),
       );
-    }).then((value) {
-      setState(() {
-        _isLoading = false;
-      });
-
+    } finally {
+      setState(() => _isLoading = false);
       Navigator.of(context).pop();
-    });
+    }
   }
 
   @override

@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class ProductList with ChangeNotifier {
   List<Product> _items = [];
-  final _url = 'https://shop-jaciel-default-rtdb.firebaseio.com/products.json';
+  final _baseUrl = 'https://shop-jaciel-default-rtdb.firebaseio.com/products';
 
   List<Product> get items => [..._items]; // Os ... significam 'clonar' a lista
   List<Product> get favoriteItems =>
@@ -20,7 +20,9 @@ class ProductList with ChangeNotifier {
   //Método para carregar os produtos do Firebase
   Future<void> loadProducts() async {
     _items.clear();
-    final response = await http.get(Uri.parse(_url));
+    final response = await http.get(
+      Uri.parse('$_baseUrl.json'),
+    );
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach((productId, productData) {
@@ -56,14 +58,25 @@ class ProductList with ChangeNotifier {
     }
   }
 
-  Future<void> updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     int index = _items.indexWhere((p) => p.id == product.id);
 
     if (index >= 0) {
+      await http.patch(
+        Uri.parse('$_baseUrl/${product.id}.json'),
+        body: jsonEncode(
+          {
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "imageUrl": product.imageUrl,
+          },
+        ),
+      );
+
       _items[index] = product;
       notifyListeners();
     }
-    return Future.value();
   }
 
   void removeProduct(Product product) {
@@ -77,7 +90,7 @@ class ProductList with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final response = await http.post(
-      Uri.parse(_url),
+      Uri.parse('$_baseUrl.json'),
       body: jsonEncode(
         {
           "name": product.name,

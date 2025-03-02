@@ -29,7 +29,7 @@ class ProductList with ChangeNotifier {
           id: productId,
           name: productData['name'],
           description: productData['description'],
-          price: productData['price'],
+          price: (productData['price'] as num).toDouble(),
           imageUrl: productData['imageUrl'],
           isFavorite: productData['isFavorite'],
         ),

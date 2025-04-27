@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop/exceptions/auth_exception.dart';
 
 class Auth with ChangeNotifier {
   //URL do registro
@@ -24,14 +25,20 @@ class Auth with ChangeNotifier {
           },
         ));
 
-    print(jsonDecode(response.body));
+    final body = jsonDecode(response.body);
+
+    print(body);
+
+    if (body['error'] != null) {
+      throw AuthException(body['error']['message']);
+    }
   }
 
   Future<void> signup(String email, String password) async {
-    _authenticate(email, password, 'signUp');
+    return _authenticate(email, password, 'signUp');
   }
 
   Future<void> login(String email, String password) async {
-    _authenticate(email, password, 'signInWithPassword');
+    return _authenticate(email, password, 'signInWithPassword');
   }
 }

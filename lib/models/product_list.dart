@@ -7,11 +7,14 @@ import 'package:http/http.dart' as http;
 import 'package:shop/utils/constants.dart';
 
 class ProductList with ChangeNotifier {
+  String _token;
   List<Product> _items = [];
 
   List<Product> get items => [..._items]; // Os ... significam 'clonar' a lista
   List<Product> get favoriteItems =>
       _items.where((product) => product.isFavorite).toList();
+
+  ProductList(this._token, this._items);
 
   int get itemsCount {
     return _items.length;
@@ -21,7 +24,7 @@ class ProductList with ChangeNotifier {
   Future<void> loadProducts() async {
     _items.clear();
     final response = await http.get(
-      Uri.parse('${Constants.PRODUCT_BASE_URL}.json'),
+      Uri.parse('${Constants.PRODUCT_BASE_URL}.json?auth=$_token'),
     );
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);

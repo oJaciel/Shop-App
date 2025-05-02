@@ -36,7 +36,6 @@ class ProductList with ChangeNotifier {
           description: productData['description'],
           price: (productData['price'] as num).toDouble(),
           imageUrl: productData['imageUrl'],
-          isFavorite: productData['isFavorite'],
         ),
       );
     });
@@ -113,7 +112,6 @@ class ProductList with ChangeNotifier {
           "description": product.description,
           "price": product.price,
           "imageUrl": product.imageUrl,
-          "isFavorite": product.isFavorite,
         },
       ),
     );

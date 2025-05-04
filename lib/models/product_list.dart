@@ -8,13 +8,18 @@ import 'package:shop/utils/constants.dart';
 
 class ProductList with ChangeNotifier {
   final String _token;
+  final String _userId;
   List<Product> _items = [];
 
   List<Product> get items => [..._items]; // Os ... significam 'clonar' a lista
   List<Product> get favoriteItems =>
       _items.where((product) => product.isFavorite).toList();
 
-  ProductList(this._token, this._items);
+  ProductList([
+    this._token = '',
+    this._userId = '',
+    this._items = const [],
+  ]);
 
   int get itemsCount {
     return _items.length;
@@ -27,8 +32,19 @@ class ProductList with ChangeNotifier {
       Uri.parse('${Constants.PRODUCT_BASE_URL}.json?auth=$_token'),
     );
     if (response.body == 'null') return;
+
+    final favResponse = await http.get(
+      Uri.parse(
+        '${Constants.USER_FAVORITES_URL}/$_userId.json?auth=$_token',
+      ),
+    );
+
+    Map<String, dynamic> favData =
+        favResponse.body == 'null' ? {} : json.decode(favResponse.body);
+
     Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach((productId, productData) {
+      final isFavorite = favData[productId] ?? false;
       _items.add(
         Product(
           id: productId,
@@ -36,6 +52,7 @@ class ProductList with ChangeNotifier {
           description: productData['description'],
           price: (productData['price'] as num).toDouble(),
           imageUrl: productData['imageUrl'],
+          isFavorite: isFavorite,
         ),
       );
     });
@@ -65,7 +82,8 @@ class ProductList with ChangeNotifier {
 
     if (index >= 0) {
       await http.patch(
-        Uri.parse('${Constants.PRODUCT_BASE_URL}/${product.id}.json?auth=$_token'),
+        Uri.parse(
+            '${Constants.PRODUCT_BASE_URL}/${product.id}.json?auth=$_token'),
         body: jsonEncode(
           {
             "name": product.name,
@@ -92,7 +110,8 @@ class ProductList with ChangeNotifier {
 
       //Depois exclui ele no servidor
       final response = await http.delete(
-        Uri.parse('${Constants.PRODUCT_BASE_URL}/${product.id}.json?auth=$_token'),
+        Uri.parse(
+            '${Constants.PRODUCT_BASE_URL}/${product.id}.json?auth=$_token'),
       );
 
       //Se der erro no servidor, o produto é inserido de volta

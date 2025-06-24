@@ -9,25 +9,39 @@ class ProductDetailPage extends StatelessWidget {
     final Product product =
         ModalRoute.of(context)!.settings.arguments as Product;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.name),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              height: 300,
-              child: Hero(
-                tag: product.id,
-                child: Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(product.name),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Hero(
+                  tag: product.id,
+                  child: Image.network(
+                    product.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
                 ),
+                const DecoratedBox(decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    Color.fromRGBO(0, 0, 0, 0.6),
+                    Color.fromRGBO(0, 0, 0, 0),
+                  ], begin: Alignment(0, 0.8), end: Alignment(0, 0))
+                ))
+                ] 
               ),
             ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
             SizedBox(height: 10),
             Text(
+              textAlign: TextAlign.center,
               'R\$ ${product.price}',
               style: TextStyle(
                 color: Colors.grey,
@@ -43,8 +57,10 @@ class ProductDetailPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             )
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
